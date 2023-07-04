@@ -13,6 +13,7 @@ type FarmersUsecase interface {
 	List() (*[]model.FarmersModel, error)
 	Create(*model.FarmersModel) error
 	Update(*model.FarmersModel) error
+	Delete(int) error
 }
 
 type farmersUsecaseImpl struct {
@@ -94,4 +95,18 @@ func (frmsUsecase *farmersUsecaseImpl) Update(frm *model.FarmersModel) error {
 	frm.UpdateAt = time.Now()
 	return frmsUsecase.frmsRepo.Update(frm)
 
+}
+
+func (frmsUsecase *farmersUsecaseImpl) Delete(id int) error {
+	frm, err := frmsUsecase.frmsRepo.GetById(id)
+	if err != nil {
+		return fmt.Errorf("frmsUsecase.frmsRepo.GetById() : %w", err)
+	}
+	if frm == nil {
+		return apperror.AppError{
+			ErrorCode:    400,
+			ErrorMassage: fmt.Sprintf("data farmer dengan id :%d tidak ada", id),
+		}
+	}
+	return frmsUsecase.frmsRepo.Delete(id)
 }
