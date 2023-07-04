@@ -12,6 +12,7 @@ type FarmersUsecase interface {
 	Get(int) (*model.FarmersModel, error)
 	List() (*[]model.FarmersModel, error)
 	Create(*model.FarmersModel) error
+	Update(*model.FarmersModel) error
 }
 
 type farmersUsecaseImpl struct {
@@ -66,4 +67,31 @@ func (frmsUsecase *farmersUsecaseImpl) Create(frm *model.FarmersModel) error {
 	frm.CreateAt = time.Now()
 	frm.UpdateBy = "-"
 	return frmsUsecase.frmsRepo.Create(frm)
+}
+
+func (frmsUsecase *farmersUsecaseImpl) Update(frm *model.FarmersModel) error {
+	isIdExist, err := frmsUsecase.frmsRepo.GetById(frm.Id)
+	if err != nil {
+		return fmt.Errorf("frmsUsecase.frmsRepo.GetById() : %w", err)
+	}
+	if isIdExist == nil {
+		return apperror.AppError{
+			ErrorCode:    400,
+			ErrorMassage: fmt.Sprintf("data farmer dengan id :%v belum ada", frm.Id),
+		}
+	}
+	var isNameExist *model.FarmersModel
+	isNameExist, err = frmsUsecase.frmsRepo.GetByName(frm.Name)
+	if err != nil {
+		return fmt.Errorf("frmsUsecase.frmsRepo.GetByName() : %w", err)
+	}
+	if isNameExist != nil {
+		return apperror.AppError{
+			ErrorCode:    400,
+			ErrorMassage: fmt.Sprintf("data farmer dengan nama :%v sudah ada", frm.Name),
+		}
+	}
+	frm.UpdateAt = time.Now()
+	return frmsUsecase.frmsRepo.Update(frm)
+
 }

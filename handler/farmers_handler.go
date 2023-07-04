@@ -150,6 +150,75 @@ func (frmsHandler *farmersHandlerImpl) AddFarmerHandler(ctx *gin.Context) {
 	})
 }
 
+func (frmsHandler *farmersHandlerImpl) UpdateFarmerHandler(ctx *gin.Context) {
+	payload := &model.FarmersModel{}
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Invalid JSON data",
+		})
+		return
+	}
+	// validate
+	if payload.Id < 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "id tidak boleh kosong",
+		})
+		return
+	}
+	if payload.Name == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Nama tidak boleh kosong",
+		})
+		return
+	}
+	if len(payload.Name) > 20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Nama tidak boleh lebih dari 20",
+		})
+		return
+	}
+	if len(payload.CreateBy) > 20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Nama tidak boleh lebih dari 20",
+		})
+		return
+	}
+	if len(payload.PhoneNumber) > 20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Nomor HP tidak boleh lebih dari 20",
+		})
+		return
+	}
+	err := frmsHandler.frmsUsecase.Update(payload)
+	if err != nil {
+		appError := apperror.AppError{}
+		if errors.As(err, &appError) {
+			fmt.Printf("frmsHandler.frmsUsecase.Update(): %v ", err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"success":      false,
+				"errorMessage": appError.Error(),
+			})
+			return
+		} else {
+			fmt.Printf("frmsHandler.frmsUsecase.Update() : %v ", err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"success":      false,
+				"errorMessage": "Terjadi kesalahan ketika mengupdate data farmer",
+			})
+			return
+		}
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
+
 func NewFarmersHandler(srv *gin.Engine, frmsUsecase usecase.FarmersUsecase) FarmersHandler {
 	frmsHandler := &farmersHandlerImpl{
 		frmsUsecase: frmsUsecase,
@@ -157,5 +226,6 @@ func NewFarmersHandler(srv *gin.Engine, frmsUsecase usecase.FarmersUsecase) Farm
 	srv.GET("/farmer/:id", frmsHandler.GetFarmerByIdHandler)
 	srv.GET("/farmers", frmsHandler.GetAllFarmerHandler)
 	srv.POST("/farmer", frmsHandler.AddFarmerHandler)
+	srv.PUT("/farmer", frmsHandler.UpdateFarmerHandler)
 	return frmsHandler
 }

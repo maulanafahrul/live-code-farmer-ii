@@ -77,8 +77,8 @@ func (frmsRepo *farmersRepoImpl) Create(frm *model.FarmersModel) error {
 	return nil
 }
 func (frmsRepo *farmersRepoImpl) Update(frm *model.FarmersModel) error {
-	qry := "UPDATE ms_farmers SET name=$1, address=$2, phone_number=$3, create_at=$4, update_at=$5, create_by=$6, update_by=$7 WHERE id=$8"
-	_, err := frmsRepo.db.Exec(qry, frm.Name, frm.Address, frm.PhoneNumber, frm.CreateAt, frm.UpdateAt, frm.CreateBy, frm.UpdateBy, frm.Id)
+	qry := "UPDATE ms_farmers SET name=$1, address=$2, phone_number=$3, update_at=$4, update_by=$5 WHERE id=$6"
+	_, err := frmsRepo.db.Exec(qry, frm.Name, frm.Address, frm.PhoneNumber, frm.UpdateAt, frm.UpdateBy, frm.Id)
 	if err != nil {
 		return fmt.Errorf("error on farmersRepoImpl.Update() : %w", err)
 	}
