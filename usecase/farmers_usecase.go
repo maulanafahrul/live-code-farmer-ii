@@ -81,8 +81,8 @@ func (frmsUsecase *farmersUsecaseImpl) Update(frm *model.FarmersModel) error {
 			ErrorMassage: fmt.Sprintf("data farmer dengan id :%v belum ada", frm.Id),
 		}
 	}
-	var isNameExist *model.FarmersModel
-	isNameExist, err = frmsUsecase.frmsRepo.GetByName(frm.Name)
+
+	isNameExist, err := frmsUsecase.frmsRepo.GetByName(frm.Name)
 	if err != nil {
 		return fmt.Errorf("frmsUsecase.frmsRepo.GetByName() : %w", err)
 	}

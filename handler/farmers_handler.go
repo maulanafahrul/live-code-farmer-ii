@@ -112,10 +112,17 @@ func (frmsHandler *farmersHandlerImpl) AddFarmerHandler(ctx *gin.Context) {
 		})
 		return
 	}
-	if len(payload.CreateBy) > 20 {
+	if payload.Address == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "Nama tidak boleh lebih dari 20",
+			"errorMessage": "Address tidak boleh kosong",
+		})
+		return
+	}
+	if payload.PhoneNumber == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Phone number tidak boleh kosong",
 		})
 		return
 	}
@@ -123,6 +130,20 @@ func (frmsHandler *farmersHandlerImpl) AddFarmerHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
 			"errorMessage": "Nomor HP tidak boleh lebih dari 20",
+		})
+		return
+	}
+	if payload.CreateBy == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "CreateBy tidak boleh kosong",
+		})
+		return
+	}
+	if len(payload.CreateBy) > 20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "CreateBy tidak boleh lebih dari 20",
 		})
 		return
 	}
@@ -163,7 +184,7 @@ func (frmsHandler *farmersHandlerImpl) UpdateFarmerHandler(ctx *gin.Context) {
 	if payload.Id < 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "id tidak boleh kosong",
+			"errorMessage": "Id tidak boleh kosong",
 		})
 		return
 	}
@@ -181,10 +202,17 @@ func (frmsHandler *farmersHandlerImpl) UpdateFarmerHandler(ctx *gin.Context) {
 		})
 		return
 	}
-	if len(payload.CreateBy) > 20 {
+	if payload.Address == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "Nama tidak boleh lebih dari 20",
+			"errorMessage": "Address tidak boleh kosong",
+		})
+		return
+	}
+	if payload.PhoneNumber == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Phone number tidak boleh kosong",
 		})
 		return
 	}
@@ -192,6 +220,20 @@ func (frmsHandler *farmersHandlerImpl) UpdateFarmerHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
 			"errorMessage": "Nomor HP tidak boleh lebih dari 20",
+		})
+		return
+	}
+	if payload.UpdateBy == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "UpdateBy tidak boleh kosong",
+		})
+		return
+	}
+	if len(payload.UpdateBy) > 20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "UpdateBy tidak boleh lebih dari 20",
 		})
 		return
 	}
