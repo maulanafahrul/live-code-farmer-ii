@@ -39,7 +39,7 @@ func (frmsHandler *farmersHandlerImpl) GetFarmerByIdHandler(ctx *gin.Context) {
 	if err != nil {
 		appError := apperror.AppError{}
 		if errors.As(err, &appError) {
-			fmt.Printf("ServiceHandler.Create() 1 : %v ", err.Error())
+			fmt.Printf("frmsHandler.frmsUsecase.Get() : %v ", err.Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"success":      false,
 				"errorMessage": appError.Error(),
@@ -61,10 +61,38 @@ func (frmsHandler *farmersHandlerImpl) GetFarmerByIdHandler(ctx *gin.Context) {
 	})
 }
 
+func (frmsHandler *farmersHandlerImpl) GetAllFarmerHandler(ctx *gin.Context) {
+	fmrs, err := frmsHandler.frmsUsecase.List()
+	if err != nil {
+		appError := apperror.AppError{}
+		if errors.As(err, &appError) {
+			fmt.Printf("frmsHandler.frmsUsecase.List(): %v ", err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"success":      false,
+				"errorMessage": appError.Error(),
+			})
+			return
+		} else {
+
+			fmt.Printf("frmsHandler.frmsUsecase.List() : %v ", err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"success":      false,
+				"errorMessage": "Terjadi kesalahan ketika mengambil data service",
+			})
+			return
+		}
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    fmrs,
+	})
+}
+
 func NewFarmersHandler(srv *gin.Engine, frmsUsecase usecase.FarmersUsecase) FarmersHandler {
 	frmsHandler := &farmersHandlerImpl{
 		frmsUsecase: frmsUsecase,
 	}
 	srv.GET("/farmer/:id", frmsHandler.GetFarmerByIdHandler)
+	srv.GET("/farmers", frmsHandler.GetAllFarmerHandler)
 	return frmsHandler
 }

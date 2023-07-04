@@ -9,6 +9,7 @@ import (
 
 type FarmersUsecase interface {
 	Get(int) (*model.FarmersModel, error)
+	List() (*[]model.FarmersModel, error)
 }
 
 type farmersUsecaseImpl struct {
@@ -33,4 +34,18 @@ func (frmsUsecase *farmersUsecaseImpl) Get(id int) (*model.FarmersModel, error) 
 		}
 	}
 	return frm, nil
+}
+
+func (frmsUsecase *farmersUsecaseImpl) List() (*[]model.FarmersModel, error) {
+	frms, err := frmsUsecase.frmsRepo.List()
+	if err != nil {
+		return nil, fmt.Errorf("frmsUsecase.frmsRepo.List() : %w", err)
+	}
+	if len(*frms) == 0 {
+		return nil, apperror.AppError{
+			ErrorCode:    400,
+			ErrorMassage: "data farmer tidak ada",
+		}
+	}
+	return frms, nil
 }
