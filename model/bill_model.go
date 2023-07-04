@@ -11,5 +11,5 @@ type BillModel struct {
 	CreateBy string
 	UpdateBy string
 
-	arrDetail []BillDetailModel
+	ArrDetail []BillDetailModel
 }

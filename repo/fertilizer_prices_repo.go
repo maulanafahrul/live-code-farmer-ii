@@ -12,6 +12,7 @@ type FertilizerPricesRepo interface {
 	Create(*model.FertilizerPricesModel) error
 	Update(*model.FertilizerPricesModel) error
 	Delete(int) error
+	GetByFertilizerId(int) (*model.FertilizerPricesModel, error)
 }
 
 type fertilizerPricesRepoImpl struct {
@@ -34,6 +35,19 @@ func (frzpRepo *fertilizerPricesRepoImpl) GetById(id int) (*model.FertilizerPric
 			return nil, nil
 		}
 		return nil, fmt.Errorf("error on fertilizerRepoImpl.GetById() : %w", err)
+	}
+	return frzp, nil
+}
+func (frzpRepo *fertilizerPricesRepoImpl) GetByFertilizerId(fertId int) (*model.FertilizerPricesModel, error) {
+	qry := "SELECT id, fertilizer_id, price, is_active, create_at, update_at, create_by, update_by FROM ms_fertilizer_prices WHERE fertilizer_id = $1"
+
+	frzp := &model.FertilizerPricesModel{}
+	err := frzpRepo.db.QueryRow(qry, fertId).Scan(&frzp.Id, &frzp.FertilizerId, &frzp.Price, &frzp.IsActive, &frzp.CreateAt, &frzp.UpdateAt, &frzp.CreateBy, &frzp.UpdateBy)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error on fertilizerRepoImpl.GetByFertilizerId() : %w", err)
 	}
 	return frzp, nil
 }

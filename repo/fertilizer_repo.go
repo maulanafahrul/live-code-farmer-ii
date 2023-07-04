@@ -13,6 +13,7 @@ type FertilizerRepo interface {
 	Create(*model.FertilizerModel) error
 	Update(*model.FertilizerModel) error
 	Delete(int) error
+	ReduceQty(int, int) error
 }
 
 type fertilizerRepoImpl struct {
@@ -92,6 +93,15 @@ func (frzRepo *fertilizerRepoImpl) Delete(id int) error {
 	_, err := frzRepo.db.Exec(qry, id)
 	if err != nil {
 		return fmt.Errorf("error on fertilizerRepoImpl.Delete() : %w", err)
+	}
+	return nil
+}
+
+func (frzRepo *fertilizerRepoImpl) ReduceQty(id int, qty int) error {
+	qry := "UPDATE ms_fertilizers SET stock=stock - $1 WHERE id = $2"
+	_, err := frzRepo.db.Exec(qry, qty, id)
+	if err != nil {
+		return fmt.Errorf("error on fertilizerRepoImpl.ReduceQty() : %w", err)
 	}
 	return nil
 }

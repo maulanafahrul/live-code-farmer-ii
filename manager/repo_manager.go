@@ -11,6 +11,7 @@ type RepoManager interface {
 	GetPlantsRepo() repo.PlantsRepo
 	GetFertilizerRepo() repo.FertilizerRepo
 	GetFertilizerPricesRepo() repo.FertilizerPricesRepo
+	GetFarmersPlantsRepo() repo.FarmersPlantsRepo
 }
 
 type repoManager struct {
@@ -20,6 +21,7 @@ type repoManager struct {
 	frzRepo      repo.FertilizerRepo
 	frzpRepo     repo.FertilizerPricesRepo
 	trxRepo      repo.TransactionRepo
+	frmplnRepo   repo.FarmersPlantsRepo
 }
 
 var onceLoadFarmersRepo sync.Once
@@ -27,6 +29,7 @@ var onceLoadPlantsRepo sync.Once
 var onceLoadFertilizerRepo sync.Once
 var onceLoadFertilizerPricesRepo sync.Once
 var onceLoadTransactionRepo sync.Once
+var onceLoadFarmersPlantsRepo sync.Once
 
 func (rm *repoManager) GetTransactionRepo() repo.TransactionRepo {
 	onceLoadTransactionRepo.Do(func() {
@@ -57,6 +60,12 @@ func (rm *repoManager) GetFertilizerPricesRepo() repo.FertilizerPricesRepo {
 		rm.frzpRepo = repo.NewFertilizerPricesRepo(rm.infraManager.GetDB())
 	})
 	return rm.frzpRepo
+}
+func (rm *repoManager) GetFarmersPlantsRepo() repo.FarmersPlantsRepo {
+	onceLoadFarmersPlantsRepo.Do(func() {
+		rm.frmplnRepo = repo.NewFarmersPlantsRepo(rm.infraManager.GetDB())
+	})
+	return rm.frmplnRepo
 }
 
 func NewRepoManager(infraManager InfraManager) RepoManager {

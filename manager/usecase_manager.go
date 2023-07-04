@@ -54,7 +54,7 @@ func (um *usecaseManager) GetFertilizerPricesUsecase() usecase.FertilizerPricesU
 }
 func (um *usecaseManager) GetTransactionUsecase() usecase.TransactionUsecase {
 	onceLoadTransactionUsecase.Do(func() {
-		um.trxUsecase = usecase.NewTransactionUsecase(um.repoManager.GetTransactionRepo())
+		um.trxUsecase = usecase.NewTransactionUsecase(um.repoManager.GetTransactionRepo(), um.repoManager.GetFarmersPlantsRepo(), um.repoManager.GetFertilizerPricesRepo(), um.repoManager.GetFertilizerRepo())
 	})
 	return um.trxUsecase
 }

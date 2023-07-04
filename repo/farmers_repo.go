@@ -69,11 +69,23 @@ func (frmsRepo *farmersRepoImpl) List() (*[]model.FarmersModel, error) {
 }
 
 func (frmsRepo *farmersRepoImpl) Create(frm *model.FarmersModel) error {
-	qry := "INSERT INTO ms_farmers(name, address, phone_number, create_at, update_at, create_by, update_by) VALUES($1, $2, $3, $4, $5, $6, $7)"
-	_, err := frmsRepo.db.Exec(qry, frm.Name, frm.Address, frm.PhoneNumber, frm.CreateAt, frm.UpdateAt, frm.CreateBy, frm.UpdateBy)
+	tx, err := frmsRepo.db.Begin()
 	if err != nil {
-		return fmt.Errorf("error on farmersRepoImpl.Create() : %w", err)
+		return fmt.Errorf("AddTransaction() Begin : %w", err)
 	}
+	qry := "INSERT INTO ms_farmers(name, address, phone_number, create_at, update_at, create_by, update_by) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id"
+	err = tx.QueryRow(qry, frm.Name, frm.Address, frm.PhoneNumber, frm.CreateAt, frm.UpdateAt, frm.CreateBy, frm.UpdateBy).Scan(&frm.Id)
+	if err != nil {
+		return fmt.Errorf("error on farmersRepoImpl.Create() table farmer: %w", err)
+	}
+	qry = "INSERT INTO farmers_plants(farmer_id) VALUES ($1)"
+	_, err = tx.Exec(qry, frm.Id)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("AddFarmerId() : %w", err)
+	}
+
+	tx.Commit()
 	return nil
 }
 func (frmsRepo *farmersRepoImpl) Update(frm *model.FarmersModel) error {
