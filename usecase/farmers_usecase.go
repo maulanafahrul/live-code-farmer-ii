@@ -5,11 +5,13 @@ import (
 	"live-code-farmer-ii/apperror"
 	"live-code-farmer-ii/model"
 	"live-code-farmer-ii/repo"
+	"time"
 )
 
 type FarmersUsecase interface {
 	Get(int) (*model.FarmersModel, error)
 	List() (*[]model.FarmersModel, error)
+	Create(*model.FarmersModel) error
 }
 
 type farmersUsecaseImpl struct {
@@ -48,4 +50,20 @@ func (frmsUsecase *farmersUsecaseImpl) List() (*[]model.FarmersModel, error) {
 		}
 	}
 	return frms, nil
+}
+
+func (frmsUsecase *farmersUsecaseImpl) Create(frm *model.FarmersModel) error {
+	isNameExist, err := frmsUsecase.frmsRepo.GetByName(frm.Name)
+	if err != nil {
+		return fmt.Errorf("frmsUsecase.frmsRepo.GetByName() : %w", err)
+	}
+	if isNameExist != nil {
+		return apperror.AppError{
+			ErrorCode:    400,
+			ErrorMassage: fmt.Sprintf("data farmer dengan nama :%v sudah ada", frm.Name),
+		}
+	}
+	frm.CreateAt = time.Now()
+	frm.UpdateBy = "-"
+	return frmsUsecase.frmsRepo.Create(frm)
 }
