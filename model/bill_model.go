@@ -10,4 +10,6 @@ type BillModel struct {
 	UpdateAt time.Time
 	CreateBy string
 	UpdateBy string
+
+	arrDetail []BillDetailModel
 }

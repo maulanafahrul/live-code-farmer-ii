@@ -36,7 +36,7 @@ func (frzHandler *fertilizerHandlerImpl) GetFertilizerByIdHandler(ctx *gin.Conte
 		})
 		return
 	}
-	pln, err := frzHandler.frzUsecase.Get(id)
+	frz, err := frzHandler.frzUsecase.Get(id)
 	if err != nil {
 		appError := apperror.AppError{}
 		if errors.As(err, &appError) {
@@ -58,7 +58,7 @@ func (frzHandler *fertilizerHandlerImpl) GetFertilizerByIdHandler(ctx *gin.Conte
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    pln,
+		"data":    frz,
 	})
 }
 
@@ -115,21 +115,21 @@ func (frzHandler *fertilizerHandlerImpl) AddFertilizerHandler(ctx *gin.Context) 
 	if payload.Stock <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "Stock tidak boleh kosong",
+			"errorMessage": "Stock tidak boleh kosong atau minus",
 		})
 		return
 	}
 	if payload.CreateBy == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "createby tidak boleh kosong",
+			"errorMessage": "CreateBy tidak boleh kosong",
 		})
 		return
 	}
 	if len(payload.CreateBy) > 20 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "createby tidak boleh lebih dari 20",
+			"errorMessage": "CreateBy tidak boleh lebih dari 20",
 		})
 		return
 	}
@@ -170,7 +170,7 @@ func (frzHandler *fertilizerHandlerImpl) UpdateFertilizerHandler(ctx *gin.Contex
 	if payload.Id <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
-			"errorMessage": "Id tidak boleh kosong",
+			"errorMessage": "Id tidak boleh kosong atau minus",
 		})
 		return
 	}
@@ -223,7 +223,7 @@ func (frzHandler *fertilizerHandlerImpl) UpdateFertilizerHandler(ctx *gin.Contex
 			fmt.Printf("frzHandler.frzUsecase.Update() : %v ", err.Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"success":      false,
-				"errorMessage": "Terjadi kesalahan ketika mengupdate data dertilizer",
+				"errorMessage": "Terjadi kesalahan ketika mengupdate data fertilizer",
 			})
 			return
 		}

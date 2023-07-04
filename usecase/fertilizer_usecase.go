@@ -26,38 +26,38 @@ func NewFertilizerUsecase(frzRepo repo.FertilizerRepo) FertilizerUsecase {
 	}
 }
 
-func (frzpUsecase *fertilizerUsecaseImpl) Get(id int) (*model.FertilizerModel, error) {
-	frz, err := frzpUsecase.frzRepo.GetById(id)
+func (frzUsecase *fertilizerUsecaseImpl) Get(id int) (*model.FertilizerModel, error) {
+	frz, err := frzUsecase.frzRepo.GetById(id)
 	if err != nil {
-		return nil, fmt.Errorf("frzpUsecase.frzRepo.GetById() : %w", err)
+		return nil, fmt.Errorf("frzUsecase.frzRepo.GetById() : %w", err)
 	}
 	if frz == nil {
 		return nil, apperror.AppError{
 			ErrorCode:    400,
-			ErrorMassage: fmt.Sprintf("data plant dengan id :%d tidak ada", id),
+			ErrorMassage: fmt.Sprintf("data fertilizer dengan id :%d tidak ada", id),
 		}
 	}
 	return frz, nil
 }
 
-func (frzpUsecase *fertilizerUsecaseImpl) List() (*[]model.FertilizerModel, error) {
-	frzs, err := frzpUsecase.frzRepo.List()
+func (frzUsecase *fertilizerUsecaseImpl) List() (*[]model.FertilizerModel, error) {
+	frzs, err := frzUsecase.frzRepo.List()
 	if err != nil {
-		return nil, fmt.Errorf("frzpUsecase.frzRepo.List() : %w", err)
+		return nil, fmt.Errorf("frzUsecase.frzRepo.List() : %w", err)
 	}
 	if len(*frzs) == 0 {
 		return nil, apperror.AppError{
 			ErrorCode:    400,
-			ErrorMassage: "data plants tidak ada",
+			ErrorMassage: "data fertilizers tidak ada",
 		}
 	}
 	return frzs, nil
 }
 
-func (frzpUsecase *fertilizerUsecaseImpl) Create(frz *model.FertilizerModel) error {
-	isNameExist, err := frzpUsecase.frzRepo.GetByName(frz.Name)
+func (frzUsecase *fertilizerUsecaseImpl) Create(frz *model.FertilizerModel) error {
+	isNameExist, err := frzUsecase.frzRepo.GetByName(frz.Name)
 	if err != nil {
-		return fmt.Errorf("frzpUsecase.frzRepo.GetByName() : %w", err)
+		return fmt.Errorf("frzUsecase.frzRepo.GetByName() : %w", err)
 	}
 	if isNameExist != nil {
 		return apperror.AppError{
@@ -67,13 +67,13 @@ func (frzpUsecase *fertilizerUsecaseImpl) Create(frz *model.FertilizerModel) err
 	}
 	frz.CreateAt = time.Now()
 	frz.UpdateBy = "-"
-	return frzpUsecase.frzRepo.Create(frz)
+	return frzUsecase.frzRepo.Create(frz)
 }
 
-func (frzpUsecase *fertilizerUsecaseImpl) Update(frz *model.FertilizerModel) error {
-	isIdExist, err := frzpUsecase.frzRepo.GetById(frz.Id)
+func (frzUsecase *fertilizerUsecaseImpl) Update(frz *model.FertilizerModel) error {
+	isIdExist, err := frzUsecase.frzRepo.GetById(frz.Id)
 	if err != nil {
-		return fmt.Errorf("frzpUsecase.frzRepo.GetById() : %w", err)
+		return fmt.Errorf("frzUsecase.frzRepo.GetById() : %w", err)
 	}
 	if isIdExist == nil {
 		return apperror.AppError{
@@ -82,9 +82,9 @@ func (frzpUsecase *fertilizerUsecaseImpl) Update(frz *model.FertilizerModel) err
 		}
 	}
 
-	isNameExist, err := frzpUsecase.frzRepo.GetByName(frz.Name)
+	isNameExist, err := frzUsecase.frzRepo.GetByName(frz.Name)
 	if err != nil {
-		return fmt.Errorf("frzpUsecase.frzRepo.GetByName() : %w", err)
+		return fmt.Errorf("frzUsecase.frzRepo.GetByName() : %w", err)
 	}
 	if isNameExist != nil {
 		return apperror.AppError{
@@ -93,19 +93,19 @@ func (frzpUsecase *fertilizerUsecaseImpl) Update(frz *model.FertilizerModel) err
 		}
 	}
 	frz.UpdateAt = time.Now()
-	return frzpUsecase.frzRepo.Update(frz)
+	return frzUsecase.frzRepo.Update(frz)
 }
 
-func (frzpUsecase *fertilizerUsecaseImpl) Delete(id int) error {
-	frz, err := frzpUsecase.frzRepo.GetById(id)
+func (frzUsecase *fertilizerUsecaseImpl) Delete(id int) error {
+	frz, err := frzUsecase.frzRepo.GetById(id)
 	if err != nil {
-		return fmt.Errorf("frzpUsecase.frzRepo.GetById() : %w", err)
+		return fmt.Errorf("frzUsecase.frzRepo.GetById() : %w", err)
 	}
 	if frz == nil {
 		return apperror.AppError{
 			ErrorCode:    400,
-			ErrorMassage: fmt.Sprintf("data plant dengan id :%d tidak ada", id),
+			ErrorMassage: fmt.Sprintf("data fertilizer dengan id :%d tidak ada", id),
 		}
 	}
-	return frzpUsecase.frzRepo.Delete(id)
+	return frzUsecase.frzRepo.Delete(id)
 }

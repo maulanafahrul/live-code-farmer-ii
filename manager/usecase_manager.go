@@ -48,7 +48,7 @@ func (um *usecaseManager) GetFertilizerUsecase() usecase.FertilizerUsecase {
 }
 func (um *usecaseManager) GetFertilizerPricesUsecase() usecase.FertilizerPricesUsecase {
 	onceLoadFertilizerPricesUsecase.Do(func() {
-		um.frzpUsecase = usecase.NewFertilizerPricesUsecase(um.repoManager.GetFertilizerPricesRepo())
+		um.frzpUsecase = usecase.NewFertilizerPricesUsecase(um.repoManager.GetFertilizerPricesRepo(), um.repoManager.GetFertilizerRepo())
 	})
 	return um.frzpUsecase
 }
