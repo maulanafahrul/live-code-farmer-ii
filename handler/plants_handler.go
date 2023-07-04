@@ -160,6 +160,13 @@ func (plnsHandler *plantsHandlerImpl) UpdatePlantsHandler(ctx *gin.Context) {
 		return
 	}
 	// validate
+	if payload.Id <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "Id tidak boleh kosong",
+		})
+		return
+	}
 	if payload.Name == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,

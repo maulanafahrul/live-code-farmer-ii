@@ -181,7 +181,7 @@ func (frmsHandler *farmersHandlerImpl) UpdateFarmerHandler(ctx *gin.Context) {
 		return
 	}
 	// validate
-	if payload.Id < 0 {
+	if payload.Id <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":      false,
 			"errorMessage": "Id tidak boleh kosong",
